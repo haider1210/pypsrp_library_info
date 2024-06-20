@@ -1,0 +1,70 @@
+
+### Importing Required Module
+```python
+from pypsrp.client import Client
+```
+This imports the `Client` class from the `pypsrp.client` module. The `Client` class provides a high-level API for interacting with a remote Windows host using the PowerShell Remoting Protocol (PSRP).
+
+### Defining Variables
+```python
+server = ["10.1--.1.5.1--", "ex2"]
+username = "username"
+password = "password"
+```
+- `server`: A list of server addresses to connect to. In this example, the list contains two items: `"10.1--.1.5.1--"` and `"ex2"`.
+- `username`: The username to use for authentication. Note that a double backslash (`\\`) is used in Python to escape a single backslash (`\`).
+- `password`: The password associated with the username for authentication.
+
+### Printing Header
+```python
+print("Output:")
+```
+Prints "Output:" to the console, serving as a header for the upcoming results.
+
+### Iterating Over Servers and Executing Command
+```python
+for srvr in server:
+    with Client(srvr, username=username, password=password, ssl=False) as client:
+        command = """powershell.exe -Command "Get-VM" """
+        stdout, stderr, rc = client.execute_cmd(command)
+        print(f"server :{srvr}\n")
+        print(stdout)
+        print(stderr)
+```
+- **Looping Through Servers**:
+  ```python
+  for srvr in server:
+  ```
+  This loop iterates over each server address in the `server` list.
+
+- **Creating a Client Context**:
+  ```python
+  with Client(srvr, username=username, password=password, ssl=False) as client:
+  ```
+  For each server, a `Client` object is created using a context manager (`with` statement). This ensures that the connection to the server is properly opened and closed. The `ssl=False` parameter indicates that the connection does not use SSL encryption.
+
+- **Defining the Command**:
+  ```python
+  command = """powershell.exe -Command "Get-VM" """
+  ```
+  This variable holds the PowerShell command to be executed on the remote server. The command `powershell.exe -Command "Get-VM"` retrieves a list of virtual machines (VMs) on the server.
+
+- **Executing the Command**:
+  ```python
+  stdout, stderr, rc = client.execute_cmd(command)
+  ```
+  The `execute_cmd` method of the `Client` object is used to run the command on the remote server. The method returns three values:
+  - `stdout`: The standard output from the command.
+  - `stderr`: The standard error output from the command.
+  - `rc`: The return code of the command (not used in this script).
+
+- **Printing the Results**:
+  ```python
+  print(f"server :{srvr}\n")
+  print(stdout)
+  print(stderr)
+  ```
+  For each server, the script prints the server address, followed by the standard output and standard error from the executed command.
+
+### Summary
+The script connects to each server in the `server` list using the `pypsrp` library, runs a PowerShell command to list virtual machines (`Get-VM`), and prints the command's output and error messages to the console. This is useful for remotely managing and gathering information from multiple Windows servers using PowerShell from a Python script.
